@@ -9,10 +9,10 @@ import { createContentBlockData, deleteContentBlock, deleteContentBlockMedia, ho
 import { createSection, deleteSection, getSection, sectionsLists } from "../controllers/section.controller";
 import { adminmenus, createM, createMenu, createNavItemPageM, deleteItem, getMenu, getMenuItem, menus, sidebarMenu, updateitem } from "../controllers/navigation.menu.controller";
 import { deactive, getPageById, getPages, page, updatePage } from "../controllers/page.controller";
-import { createFacility, deleteFacility, getFacility, getFacilitys, updateFacility } from "../controllers/facilities.controller";
+import { createFacility, deleteFacility, getFacility, getFacilitys, servicesFacility, updateFacility } from "../controllers/facilities.controller";
 import { footerCategory } from "../controllers/footer.category.controller";
 import { footerContent, footerContentUpdate } from "../controllers/footer.content.controller";
-import { createSpecialties, doctorSpecialist, fetchSpecialties } from "../controllers/specialties.controller";
+import { assignSpecialties, createSpecialties, doctorSpecialist, fetchSpecialties } from "../controllers/specialties.controller";
 import { addExpert, createDoctor, getDoctorById } from "../controllers/doctor.controller";
 
 
@@ -83,6 +83,7 @@ export const AdminRoute = (router: express.Router): void => {
   route.get("/facility/:id", getFacility);
   route.put("/facility/id", updateFacility);
   route.delete("/facility/:id", deleteFacility);
+  route.put("/assign/servicesfacility",servicesFacility)
 
   // Footer Api
   route.get("/footer/category", footerCategory)
@@ -92,7 +93,8 @@ export const AdminRoute = (router: express.Router): void => {
   // specialties Api
   route.get("/specialties", fetchSpecialties) // fetch all specialties
   route.post("/specialties", createSpecialties) // create new specialties
-  
+  route.post("/asign/specialties",assignSpecialties)// assign specialties on page
+
   // Doctor Api
   route.post("/doctor", createDoctor);
   route.get("/doctor/specialist", doctorSpecialist)

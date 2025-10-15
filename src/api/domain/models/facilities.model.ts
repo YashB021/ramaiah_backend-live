@@ -1,5 +1,6 @@
 import { AppDataSource } from "../../config/db";
 import { Facility } from "../entities/facilities.entities";
+import { FacilitySpecialty } from "../entities/facility_specialties.entities";
 
 const facilityRepo = AppDataSource.getRepository(Facility);
 
@@ -80,6 +81,50 @@ export const deleteFacilityApi = async (
 
     await facilityRepo.remove(facility);
     return callback(null, { message: "Facility deleted successfully" });
+  } catch (error) {
+    return callback(error instanceof Error ? error.message : error, null);
+  }
+};
+
+
+export const updateServiceFacility = async ( 
+    reqBody: any,
+    callback: (error: any, result: any) => void
+) => {
+  try {
+    const { facility_id, specialty_id, content_block_id } = reqBody;
+
+     if (!facility_id) {
+      return callback("facility_id is required", null);
+    }
+
+    const facilitySpecialtyRepo = AppDataSource.getRepository(FacilitySpecialty);
+
+    // Build dynamic where condition
+    const whereCondition: any = { 
+      facility_id,
+      content_block_id 
+    };
+    if (specialty_id) whereCondition.specialty_id = specialty_id;
+
+    // Check if record already exists
+    let existing = await facilitySpecialtyRepo.findOne({ where: whereCondition });
+
+    if (existing) {
+      // Update record
+      existing.content_block_id = content_block_id ?? existing.content_block_id;
+      const updated = await facilitySpecialtyRepo.save(existing);
+      return callback(null, { message: "FacilitySpecialty updated successfully", data: updated });
+    } else {
+      // Create new record
+      const newRecord = facilitySpecialtyRepo.create({
+        facility_id,
+        specialty_id,
+        content_block_id,
+      });
+      const saved = await facilitySpecialtyRepo.save(newRecord);
+      return callback(null, { message: "FacilitySpecialty added successfully", data: saved });
+    }
   } catch (error) {
     return callback(error instanceof Error ? error.message : error, null);
   }

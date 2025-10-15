@@ -96,3 +96,62 @@ export const getDoctorSpecialist = async(
         }
     }
 }
+
+export const assignSpecialtiesOnPage = async(
+    reqBody:any,
+    callback:(error:any, result:any)=>void
+) => {
+    try {
+      const {
+      name,
+      slug,
+      short_name,
+      description,
+      overview,
+      icon_class,
+      color,
+      display_order,
+      content_block_id,
+    } = reqBody;
+
+    if (!content_block_id) {
+      return callback("content_block_id is required", null);
+    }
+
+    const specialtyRepo = AppDataSource.getRepository(Specialty);
+
+    // 🔍 Check if specialty with this content_block_id already exists
+    const existing = await specialtyRepo.findOne({
+      where: { content_block_id },
+    });
+
+    if (existing) {
+      return callback(null, {
+        message: "Specialty with this content_block_id already exists",
+        data: existing,
+        created: false,
+      });
+    }
+
+    // 🆕 Create new specialty
+    const newSpecialty = specialtyRepo.create({
+      name,
+      slug,
+      short_name,
+      description,
+      overview,
+      icon_class,
+      color,
+      display_order,
+      content_block_id,
+    });
+
+    const saved = await specialtyRepo.save(newSpecialty);
+
+        return callback(null, saved);
+    } catch (error) {
+        if(error instanceof Error){
+            return callback(error.message,null)
+        }
+    }
+}

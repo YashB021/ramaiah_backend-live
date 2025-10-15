@@ -29,7 +29,7 @@ export class ContentBlock {
 
   @Column({
     type: 'enum',
-    enum: ['text', 'image', 'video', 'button', 'icon', 'statistic', 'testimonial', 'accreditation', 'doctor', 'treatment', 'facility', 'custom']
+    enum: ['text', 'image','background_image', 'video', 'button', 'icon', 'statistic', 'testimonial', 'accreditation', 'doctor', 'treatment', 'facility', 'custom']
   })
   "block_type": string;
 
