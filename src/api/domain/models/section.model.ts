@@ -75,7 +75,26 @@ export const getSectionsListById = async(
                 "content_blocks.experts.doctorSpecialty.doctor",
                 "content_blocks.experts.doctorSpecialty.specialty",
             ],
-            order: {display_order: "ASC"}
+            order: {
+                display_order: "ASC",   // sort sections by display_order
+                content_blocks: {
+                    display_order: "ASC",    // sort nested content_block by display_order
+                    specialties:{
+                        display_order:"ASC",
+                    },
+                    facilitySpecialties:{
+                        facility:{
+                            display_order:"ASC"
+                        },
+                    },
+                    experts:{
+                        doctorSpecialty:{
+                            display_order:"ASC"
+                        }
+                    }
+                }
+            } 
+
         })
         
     // medical-oncology

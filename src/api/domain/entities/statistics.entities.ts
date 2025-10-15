@@ -13,6 +13,9 @@ export class Statistic {
   @Column({ length: 50 })
   "statistic_text": string;
 
+  @Column({nullable:true, type:"varchar"})
+  "statistics_image": string;
+  
   @Column({ length: 50, nullable: true })
   "number": string;
 

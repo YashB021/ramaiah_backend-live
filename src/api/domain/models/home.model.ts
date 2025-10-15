@@ -490,7 +490,7 @@ export const createContentBlock = async (
     //   return callback('Can only create content blocks for home page',null)
     // }
     
-    console.log("contentBlockData..........",contentBlockData)
+    
     await updateContentBlock(contentBlockData, sectionId,(error:any, result:any) =>{
       if(error){
           return callback(error,null)
@@ -516,7 +516,7 @@ export const createContentBlock = async (
     }
     return callback(null,transformContentBlocks([createdBlock])[0]);
   } catch (error) {
-    console.log("err...",error)
+    
       if(error instanceof Error){
           return callback(error.message,null)
       }

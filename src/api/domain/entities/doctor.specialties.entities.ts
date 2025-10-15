@@ -21,6 +21,9 @@ export class DoctorSpecialty {
   @OneToMany(() => ContentBlockExpert, cbe => cbe.doctorSpecialty)
   "contentBlocks": ContentBlockExpert[];
 
+  @Column({type:"int"})
+  "display_order": Number;
+  
   @CreateDateColumn()
   "created_at": Date;
 }

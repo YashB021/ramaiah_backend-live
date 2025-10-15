@@ -36,6 +36,7 @@ export interface StatisticDto {
   icon_class?: string;
   color?: string;
   animation_delay?: number;
+  statistics_image?: string;
 }
 
 export interface TestimonialDto {

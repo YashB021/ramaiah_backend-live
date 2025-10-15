@@ -46,6 +46,7 @@ export const updateStatistics = async (
       if(stat.icon_class) statistic.icon_class = stat.icon_class;
       if(stat.color) statistic.color = stat.color;
       if(stat.animation_delay) statistic.animation_delay = stat.animation_delay;
+      if(stat.statistics_image) statistic.statistics_image = stat.statistics_image;
 
       await statisticRepositoy.save(statistic);
     }
