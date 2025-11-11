@@ -13,10 +13,13 @@ import { createFacility, deleteFacility, getFacility, getFacilitys, servicesFaci
 import { footerCategory } from "../controllers/footer.category.controller";
 import { footerContent, footerContentUpdate } from "../controllers/footer.content.controller";
 import { assignSpecialties, createSpecialties, doctorSpecialist, fetchSpecialties } from "../controllers/specialties.controller";
-import { addExpert, createDoctor, getDoctorById } from "../controllers/doctor.controller";
+import { addExpert, createDoctor, getDoctorById, getDoctorBySlug } from "../controllers/doctor.controller";
+import { createCombined } from "../controllers/combined.controller";
+import { getPageBySlug } from "../controllers/page.controller";
 
 
-const route = express.Router();
+
+const route = express.Router();  
 // pm2 start ts-node -- -P tsconfig.json index.ts
 /** guide router function */
 export const AdminRoute = (router: express.Router): void => {
@@ -101,7 +104,17 @@ export const AdminRoute = (router: express.Router): void => {
   route.post("/expert", addExpert)
   route.get("/doctor/:id", getDoctorById)
 
+  // Combined Content Creation API
+  route.post("/content/create", createCombined)
 
+
+  // Get Page by Slug
+  route.get("/page/:slug", getPageBySlug);
+
+//  Get Doctior Details by Slug
+  route.get("/doctor-detail/:slug", getDoctorBySlug);
+
+  
 
 
 };

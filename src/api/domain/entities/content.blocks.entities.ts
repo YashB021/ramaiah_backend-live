@@ -67,6 +67,9 @@ export class ContentBlock {
   @Column({ type: 'text', nullable: true })
   "custom_css": string;
 
+  @Column({ length: 10, nullable: true })
+  "field_tag": string;
+
   @CreateDateColumn()
   "created_at": Date;
 

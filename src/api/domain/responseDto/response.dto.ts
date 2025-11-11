@@ -99,6 +99,8 @@ export interface ContentBlockDto {
   display_order: number;
   alignment?: "left" | "center" | "right";
   width_percentage?: number;
+  custom_css?: string;
+  field_tag?: string;
   media_files?: MediaFileDto[];
   statistics?: StatisticDto[];
   testimonials?: TestimonialDto[];
@@ -141,6 +143,8 @@ export interface SectionDto {
 
 export interface UpdateHomePageDto {
   title?: string;
+  slug?: string;
+  page_type?: 'home' | 'about' | 'contact' | 'specialty' | 'treatment' | 'doctor' | 'blog' | 'custom';
   meta_title?: string;
   meta_description?: string;
   meta_keywords?: string;
@@ -165,3 +169,5 @@ export interface DoctorDto {
   display_order?: number;
   specialty_ids?: number[]; // ✅ IDs of specialties to attach
 }
+
+   

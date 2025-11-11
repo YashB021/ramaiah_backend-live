@@ -82,8 +82,14 @@ export const section = async (req: Request, res: Response) => {
 }
 
 export const updateContentBlockData = async (req: Request, res: Response) => {
+    console.log('=== updateContentBlockData called ===');
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
+    console.log('Request params:', req.params);
     const sectionId = Number(req.params.sectionId);
     const updateData = req.body.updateData;
+    console.log('Section ID:', sectionId);
+    console.log('Received updateData:', JSON.stringify(updateData, null, 2));
+    console.log('field_tag value:', updateData?.field_tag);
     try {
         updateContentBlock(updateData,sectionId,(error:any, result:any) => {
             if(error){

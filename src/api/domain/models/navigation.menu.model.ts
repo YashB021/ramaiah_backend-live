@@ -282,7 +282,7 @@ export const getMenuItemsById = async (
   callback: (error: any, result: any) => void
 ) => {
   try {
-     const itemRepo = AppDataSource.getRepository(NavigationItem);
+    const itemRepo = AppDataSource.getRepository(NavigationItem);
 
     const menuItem = await itemRepo.findOne({
       where: { id: menuItemId, is_active: true },
@@ -357,3 +357,16 @@ export const deleteMenuitem = async (
   }
 };
 
+export const deleteNavPageItemMenu = async (
+  menuItemId: number,
+  callback: (error: any, result: any) => void
+) => {
+  try {
+    await navigationItemPageRepository.delete({id: menuItemId});
+    return callback(null,"Delete successfully.")
+  } catch (error) {
+    if (error instanceof Error) {
+      return callback(error.message, null);
+    }
+  }
+}

@@ -5,10 +5,13 @@ import {
   Index,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
   OneToMany,
 } from "typeorm";
 import { DoctorSpecialty } from "./doctor.specialties.entities";
 ;
+import { DoctorProfile } from "./doctor.profile.entities";
+
 
 @Entity("doctors")
 export class Doctor {
@@ -77,5 +80,9 @@ export class Doctor {
   // 🔗 Relation with doctor_specialties
   @OneToMany(() => DoctorSpecialty, ds => ds.doctor)
   "doctorSpecialties": DoctorSpecialty[];
+
+  @OneToOne(() => DoctorProfile, (profile) => profile.doctor)
+  "profile": DoctorProfile | null;
+
 
 }

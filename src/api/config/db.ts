@@ -78,7 +78,8 @@ export const AppDataSource = new DataSource({
   username: env.DB_USER,
   password: env.DB_PASS,
   database: env.DB_NAME,
-  // synchronize: true, // Use only in dev
+  // ssl : true,
+  //  synchronize: true, // Use only in dev
   logging: false,
   entities: [
     path.join(__dirname, "../", `domain/entities/*{.ts,.js}`),
@@ -86,11 +87,11 @@ export const AppDataSource = new DataSource({
     path.join(__dirname, "../", `domain/entities/admin/*{.ts,.js}`)
   ],
   migrations: [path.join(__dirname, "../", `domain/migration/*{.ts,.js}`)],
-  extra: {
-    ssl: {
-        rejectUnauthorized: false, // Adjust based on your security requirements
-    },
-  },
+  // extra: {
+  //   ssl: {
+  //       rejectUnauthorized: false, // Adjust based on your security requirements
+  //   },
+  // },
 });
 
 AppDataSource.initialize()

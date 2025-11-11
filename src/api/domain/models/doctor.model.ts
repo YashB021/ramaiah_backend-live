@@ -13,6 +13,7 @@ const doctorSpecialtyRepository = AppDataSource.getRepository(DoctorSpecialty);
 const contentBlockRepo = AppDataSource.getRepository(ContentBlock);
 const contentBlockExpertRepo = AppDataSource.getRepository(ContentBlockExpert);
 
+
 export const createDoctorApi = async(
     reqBody:DoctorDto,
     callback: (error:any, result:any) => void
@@ -153,3 +154,66 @@ export const getDoctorDetailsById = async(
         }
     }
 }
+
+export const getDoctorDetailsBySlug = async (
+    slug: string,
+    callback: (error: any, result: any) => void
+  ) => {
+    try {
+      const doctor = await doctorRepository.findOne({
+        where: { slug },
+        relations: ["doctorSpecialties", "doctorSpecialties.specialty"],
+      });
+  
+      if (!doctor) return callback("Doctor not found", null);
+  
+      
+      const response = {
+        id: doctor.id,
+        name: `Dr. ${doctor.first_name} ${doctor.last_name}`,
+        designation: doctor.designation,
+        specialty: doctor.doctorSpecialties?.[0]?.specialty?.name || null,
+        qualifications: doctor.qualifications,
+        experience_years: doctor.experience_years,
+        profile_image: doctor.profile_image,
+        languages: doctor.languages,
+        overviewParagraphs: [
+          doctor.about || "No overview available."
+        ],
+        expertise: doctor.specializations
+          ? doctor.specializations.split(",").map(e => e.trim())
+          : [],
+        fellowships: [
+          "Fellowship in Hematology/Oncology",
+          "Training in Bone Marrow Transplantation",
+        ],
+        awards: [
+          "Research Excellence Award – Ramaiah Medical College",
+          "Teaching Excellence recognition for postgraduate training",
+        ],
+        experience: [
+          `${doctor.experience_years || 0}+ years of experience in Oncology`,
+          "Autologous and allogeneic stem cell transplants",
+          "Clinical research and mentoring",
+        ],
+        memberships: [
+          "Member, Association of Medical Oncologists of India (AMOI)",
+          "Member, European Society of Medical Oncology (ESMO)",
+        ],
+        blogs: [
+          {
+            date: "2025-05-01",
+            title: "Optimizing outcomes in acute leukemia",
+            description: "Discussion on risk-adapted transplant approaches.",
+            doctor: `Dr. ${doctor.first_name} ${doctor.last_name}`,
+            link: "#",
+          },
+        ],
+      };
+  
+      return callback(null, response);
+    } catch (error) {
+      if (error instanceof Error) return callback(error.message, null);
+    }
+  };
+  

@@ -43,7 +43,7 @@ export const doctorSpecialist = async (req: Request, res: Response) => {
         return ErrorResponse(res, error);
     }
 }
-
+    
 export const assignSpecialties = async (req: Request, res: Response) => {
     const reqBody = req.body;
     try {

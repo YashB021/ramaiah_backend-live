@@ -78,7 +78,7 @@ export const header = async (req: Request, res: Response) =>{
             }
             return successResponse(res,"Upload successfully.",result)
         })
-    } catch (error) {
+    } catch (error) { 
         if (error instanceof Error) {
             return ErrorResponse(res, error.message);
         }

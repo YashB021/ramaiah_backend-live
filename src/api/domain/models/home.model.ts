@@ -72,6 +72,7 @@ export const getHomePageData = async (
             id: homePage.id,
             slug: homePage.slug,
             title: homePage.title,
+            page_type: homePage.page_type,
             meta_title: homePage.meta_title,
             meta_description: homePage.meta_description,
             meta_keywords: homePage.meta_keywords,
@@ -82,9 +83,10 @@ export const getHomePageData = async (
             return callback(error.message,null)
         }
     }
-}
+};
+
 export const getHomePageDataAdmin = async (
-    callback:(error:any, result:any) => void
+    callback: (error: any, result: any) => void
 ) => {
     try {
          const page = await pageRepository.findOne({
@@ -123,12 +125,17 @@ export const getHomePageDataAdmin = async (
             alignment: cb.alignment,
             width_percentage: cb.width_percentage,
             custom_css: cb.custom_css,
+            field_tag: cb.field_tag,
             display_order: cb.display_order,
 
             media_files: cb.media_files
             .sort((a, b) => a.display_order - b.display_order)
             .map(mf => ({
               id: mf.id,
+              file_url: mf.media_file?.file_url,
+              alt_text: mf.media_file?.alt_text,
+              media_type: mf.media_type,
+              display_order: mf.display_order,
               media_file: mf.media_file
             })),
 
@@ -145,7 +152,18 @@ export const getHomePageDataAdmin = async (
           ? a.display_order - b.display_order
           : a.section_id - b.section_id
       );
-      return callback(null, contentBlocks)
+      
+      // Return page metadata along with content blocks
+      return callback(null, {
+        id: page.id,
+        slug: page.slug,
+        title: page.title,
+        page_type: page.page_type,
+        meta_title: page.meta_title,
+        meta_description: page.meta_description,
+        meta_keywords: page.meta_keywords,
+        content_blocks: contentBlocks
+      })
     } catch (error) {
         if(error instanceof Error){
             return callback(error.message,null)
@@ -168,6 +186,8 @@ export const transformContentBlocks = (contentBlocks: EntityContentBlock[]): Dto
       display_order: block.display_order,
       alignment: block.alignment as DtoContentBlock["alignment"],
       width_percentage: block.width_percentage,
+      custom_css: block.custom_css,
+      field_tag: block.field_tag,
 
       media_files:
         block.media_files?.map((media) => ({
@@ -251,6 +271,8 @@ export const updateHomePage = async(
       }
 
       if (updateData.title) homePage.title = updateData.title;
+      if (updateData.slug) homePage.slug = updateData.slug;
+      if (updateData.page_type) homePage.page_type = updateData.page_type;
       if (updateData.meta_title) homePage.meta_title = updateData.meta_title;
       if (updateData.meta_description) homePage.meta_description = updateData.meta_description;
       if (updateData.meta_keywords) homePage.meta_keywords = updateData.meta_keywords;
@@ -344,6 +366,10 @@ export const updateContentBlock = async (
     sectionId: number,
     callback: (error:any, result:any) => void
 ) => {
+    console.log('=== updateContentBlock function called ===');
+    console.log('contentBlockData:', JSON.stringify(contentBlockData, null, 2));
+    console.log('sectionId:', sectionId);
+    console.log('field_tag in data:', contentBlockData?.field_tag);
     let contentBlock: EntityContentBlock | null;
     
     if (contentBlockData.id) {
@@ -366,9 +392,15 @@ export const updateContentBlock = async (
     if (contentBlockData.display_order !== undefined) contentBlock.display_order = contentBlockData.display_order;
     if (contentBlockData.alignment) contentBlock.alignment = contentBlockData.alignment;
     if (contentBlockData.width_percentage !== undefined) contentBlock.width_percentage = contentBlockData.width_percentage;
+    if (contentBlockData.custom_css !== undefined) contentBlock.custom_css = contentBlockData.custom_css;
+    if (contentBlockData.field_tag !== undefined) {
+      contentBlock.field_tag = contentBlockData.field_tag;
+      console.log('Setting field_tag:', contentBlockData.field_tag, 'for block ID:', contentBlockData.id);
+    }
     if (contentBlockData.status) contentBlock.status = contentBlockData.status;
 
     const savedContentBlock = await contentBlockRepository.save(contentBlock);
+    console.log('Saved content block field_tag:', savedContentBlock.field_tag);
     
     if(contentBlockData.media_files){
       await updateContentBlockMedia(contentBlockData.media_files, savedContentBlock.id);

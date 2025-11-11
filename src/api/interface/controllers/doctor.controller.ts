@@ -1,3 +1,4 @@
+import { getDoctorDetailsBySlug } from "../../domain/models/doctor.model";
 import { Request, Response } from "express";
 import { ErrorResponse, successResponse } from "../../helpers/apiResponse";
 import { addExpertContentBlockWise, createDoctorApi, getDoctorDetailsById } from "../../domain/models/doctor.model";
@@ -56,3 +57,16 @@ export const getDoctorById = async(req: Request, res: Response) => {
         }
     }
 }
+
+
+export const getDoctorBySlug = async (req: Request, res: Response) => {
+    const { slug } = req.params;
+    try {
+      getDoctorDetailsBySlug(slug, (error: any, result: any) => {
+        if (error) return ErrorResponse(res, error);
+        return successResponse(res, "Doctor details fetched", result);
+      });
+    } catch (error) {
+      if (error instanceof Error) return ErrorResponse(res, error.message);
+    }
+  };

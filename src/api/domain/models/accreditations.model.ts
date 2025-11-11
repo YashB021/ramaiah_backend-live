@@ -9,7 +9,7 @@ export const updateAccreditations = async (
     contentBlockId: number
 )=>{
     try {
-        // Delete existing accreditations
+        // Delete existing accreditations   
         await accreditationRepository.delete({ content_block_id: contentBlockId });
 
         // Insert new accreditations

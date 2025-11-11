@@ -108,3 +108,40 @@ export const deactivatePage = async (
     if (error instanceof Error) return callback(error.message, null);
   }
 };
+
+export const getPageDataBySlug = async (
+  slug: string,
+  callback: (error: any, result: any) => void
+) => {
+  try {
+      const page = await pageRepository.findOne({
+          where: { 
+              slug: slug,
+              is_active: true,
+              is_published: true 
+          },
+          relations: [
+              'sections',
+              'sections.content_blocks',
+              'sections.content_blocks.media_files',
+              'sections.content_blocks.media_files.media_file',
+              'sections.content_blocks.statistics',
+              'sections.content_blocks.testimonials',
+              'sections.content_blocks.accreditations',
+              'sections.content_blocks.buttons',
+              'sections.content_blocks.faqs'
+          ]
+      });
+
+      if (!page) {
+          return callback(`Page with slug '${slug}' not found`, null);
+      }
+
+      return callback(null, page);
+  } catch (error) {
+      if (error instanceof Error) {
+          return callback(error.message, null);
+      }
+      return callback('Unknown error occurred', null);
+  }
+};
