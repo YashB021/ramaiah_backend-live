@@ -10,8 +10,11 @@ import {
 } from "typeorm";
 import { DoctorSpecialty } from "./doctor.specialties.entities";
 ;
-import { DoctorProfile } from "./doctor.profile.entities";
-
+import { DoctorAward } from "./doctor.awards.entities";
+import { DoctorBlog } from "./doctor.blogs.entities";
+import { DoctorFellowship } from "./doctor.fellowship.entities";
+import { DoctorExperience } from "./doctor.experience.entities";
+import { DoctorMembership } from "./doctor.memberships.entities";
 
 @Entity("doctors")
 export class Doctor {
@@ -28,7 +31,7 @@ export class Doctor {
   @Column({ type: "varchar", length: 100 })
   "slug": string;
 
-  @Column({ type: "varchar",default:null})
+  @Column({ type: "varchar", default: null })
   "profile_image": string | null;
 
   @Column({ type: "varchar", length: 100, nullable: true })
@@ -81,8 +84,22 @@ export class Doctor {
   @OneToMany(() => DoctorSpecialty, ds => ds.doctor)
   "doctorSpecialties": DoctorSpecialty[];
 
-  @OneToOne(() => DoctorProfile, (profile) => profile.doctor)
-  "profile": DoctorProfile | null;
+  @OneToMany(() => DoctorFellowship, fellowship => fellowship.doctor)
+  fellowships: DoctorFellowship[];
+
+  @OneToMany(() => DoctorExperience, experience => experience.doctor)
+  experiences: DoctorExperience[];
+
+  @OneToMany(() => DoctorAward, award => award.doctor)
+  awards: DoctorAward[];
+
+  @OneToMany(() => DoctorMembership, membership => membership.doctor)
+  memberships: DoctorMembership[];
+
+  @OneToMany(() => DoctorBlog, blog => blog.doctor)
+  blogs: DoctorBlog[];
+
+
 
 
 }

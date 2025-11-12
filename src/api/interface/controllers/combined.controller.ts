@@ -31,5 +31,5 @@ export const createCombined = async (req: Request, res: Response) => {
         if (error instanceof Error) {
             return ErrorResponse(res, error.message);
         }
-    }
+    }   
 };
