@@ -23,10 +23,10 @@ export class Facility {
   @PrimaryGeneratedColumn()
   "id": number;
 
-  @Column({ length: 100 })
+  @Column({ type: "text" })
   "name": string;
 
-  @Column({ length: 100, unique: true })
+  @Column({ length: 100, unique: true , nullable : true})
   "slug": string;
 
   @Column({ type: "text", nullable: true })
