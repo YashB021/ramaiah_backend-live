@@ -55,7 +55,7 @@ export class SiteSetting {
   @Index("idx_is_public")
   "is_public": boolean;
 
-  @Column({type:"boolean", default: true})
+  @Column({type:"boolean", default: true , nullable: true})
   "status": boolean;
   
   @CreateDateColumn({ type: "timestamp" })

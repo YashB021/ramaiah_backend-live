@@ -69,4 +69,4 @@ export const getDoctorBySlug = async (req: Request, res: Response) => {
     } catch (error) {
       if (error instanceof Error) return ErrorResponse(res, error.message);
     }
-  };
+};

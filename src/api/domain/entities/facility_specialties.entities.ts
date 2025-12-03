@@ -23,7 +23,7 @@ export class FacilitySpecialty {
   @Column()
   "facility_id": number;
 
-  @Column()
+  @Column({nullable : true})
   "specialty_id": number;
 
   @Column({nullable: true})

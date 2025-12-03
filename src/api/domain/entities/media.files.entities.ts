@@ -21,7 +21,8 @@ export class MediaFile {
 
   @Column({
     type: 'enum',
-    enum: ['image', 'video', 'document', 'audio']
+    enum: ['image', 'video', 'document', 'audio'],
+    
   })
   "file_type": string;
 

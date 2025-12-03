@@ -165,11 +165,6 @@ export const getDoctorDetailsBySlug = async (
             relations: [
                 "doctorSpecialties",
                 "doctorSpecialties.specialty",
-                "fellowships",
-                "experiences",
-                "awards",
-                "memberships",
-                "blogs"
             ],
         });
 

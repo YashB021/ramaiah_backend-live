@@ -12,7 +12,8 @@
     "start": "ts-node index.ts",
     "rebuild": "npm run build",
     "pm2": "pm2 restart build/index.js",
-    "start:dev": "ts-node-dev --respawn --transpile-only index.ts"
+    "start:dev": "ts-node-dev --respawn --transpile-only index.ts",
+    "typeorm": "typeorm-ts-node-commonjs -d ./src/api/config/db.ts"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.6",

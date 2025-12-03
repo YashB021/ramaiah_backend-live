@@ -79,7 +79,7 @@ export const AppDataSource = new DataSource({
   password: env.DB_PASS,
   database: env.DB_NAME,
   // ssl : true,
-  //  synchronize: true, // Use only in dev
+  synchronize: false, // Use only in dev
   logging: false,
   entities: [
     path.join(__dirname, "../", `domain/entities/*{.ts,.js}`),

@@ -10,11 +10,6 @@ import {
 } from "typeorm";
 import { DoctorSpecialty } from "./doctor.specialties.entities";
 ;
-import { DoctorAward } from "./doctor.awards.entities";
-import { DoctorBlog } from "./doctor.blogs.entities";
-import { DoctorFellowship } from "./doctor.fellowship.entities";
-import { DoctorExperience } from "./doctor.experience.entities";
-import { DoctorMembership } from "./doctor.memberships.entities";
 
 @Entity("doctors")
 export class Doctor {
@@ -81,23 +76,23 @@ export class Doctor {
   "updated_at": Date;
 
   // 🔗 Relation with doctor_specialties
-  @OneToMany(() => DoctorSpecialty, ds => ds.doctor)
+@OneToMany(() => DoctorSpecialty, ds => ds.doctor)
   "doctorSpecialties": DoctorSpecialty[];
 
-  @OneToMany(() => DoctorFellowship, fellowship => fellowship.doctor)
-  fellowships: DoctorFellowship[];
+@Column({ type: "jsonb", default: () => "'[]'" })
+fellowships: any[];
 
-  @OneToMany(() => DoctorExperience, experience => experience.doctor)
-  experiences: DoctorExperience[];
+@Column({ type: "jsonb", default: () => "'[]'" })
+experiences: any[];
 
-  @OneToMany(() => DoctorAward, award => award.doctor)
-  awards: DoctorAward[];
+@Column({ type: "jsonb", default: () => "'[]'" })
+awards: any[];
 
-  @OneToMany(() => DoctorMembership, membership => membership.doctor)
-  memberships: DoctorMembership[];
+@Column({ type: "jsonb", default: () => "'[]'" })
+memberships: any[];
 
-  @OneToMany(() => DoctorBlog, blog => blog.doctor)
-  blogs: DoctorBlog[];
+@Column({ type: "jsonb", default: () => "'[]'" })
+blogs: any[];
 
 
 

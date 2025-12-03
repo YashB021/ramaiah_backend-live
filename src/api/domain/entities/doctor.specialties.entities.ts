@@ -18,12 +18,15 @@ export class DoctorSpecialty {
   @JoinColumn({ name: "specialty_id" })
   "specialty": Specialty;
 
+  @Column({ type: "boolean", name: "is_primary", default: false })
+  is_primary: boolean;
+
   @OneToMany(() => ContentBlockExpert, cbe => cbe.doctorSpecialty)
   "contentBlocks": ContentBlockExpert[];
 
-  @Column({type:"int"})
+  @Column({ type: "int" , nullable : true })
   "display_order": Number;
-  
+
   @CreateDateColumn()
   "created_at": Date;
 }
