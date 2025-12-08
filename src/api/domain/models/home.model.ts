@@ -387,7 +387,7 @@ export const updateContentBlock = async (
     contentBlock.section_id = sectionId;
   }
 
-  // 🔒 VALIDATION: allow only a single h1 per page
+  // 🔒 VALIDATION: allow only a single h1 and a single h2 per page
   if (tag === 'h1' || tag === 'h2') {
     // load section with page to get page_id
     const section = await sectionRepository.findOne({
@@ -396,26 +396,26 @@ export const updateContentBlock = async (
     });
 
     if (!section || !section.page) {
-      return callback('Section or page not found for H1 validation', null);
+      return callback('Section or page not found for heading validation', null);
     }
 
     const pageId = section.page.id;
 
-    // check if another h1 exists on this page (excluding this block when updating)
+    // check if another same heading tag exists on this page (excluding this block when updating)
     const qb = contentBlockRepository
       .createQueryBuilder('cb')
       .innerJoin('cb.section', 's')
       .where('s.page_id = :pageId', { pageId })
-      .andWhere('cb.field_tag = :tag', { tag: 'h1' });
+      .andWhere('cb.field_tag = :tag', { tag }); // 👈 use actual tag ('h1' or 'h2')
 
     if (contentBlockData.id) {
       qb.andWhere('cb.id <> :id', { id: contentBlockData.id });
     }
 
-    const existingH1 = await qb.getOne();
+    const existingHeading = await qb.getOne();
 
-    if (existingH1) {
-      return callback('Only one h1 tag is allowed per page', null);
+    if (existingHeading) {
+      return callback(`Only one ${tag} tag is allowed per page`, null);
     }
   }
   // 🔒 END VALIDATION
@@ -469,6 +469,7 @@ export const updateContentBlock = async (
     return callback(null, result);
   });
 };
+
 
 
 
