@@ -362,78 +362,114 @@ export const updateSection = async(
 }
 
 export const updateContentBlock = async (
-    contentBlockData: ContentBlockDto, 
-    sectionId: number,
-    callback: (error:any, result:any) => void
+  contentBlockData: ContentBlockDto, 
+  sectionId: number,
+  callback: (error:any, result:any) => void
 ) => {
-    console.log('=== updateContentBlock function called ===');
-    console.log('contentBlockData:', JSON.stringify(contentBlockData, null, 2));
-    console.log('sectionId:', sectionId);
-    console.log('field_tag in data:', contentBlockData?.field_tag);
-    let contentBlock: EntityContentBlock | null;
-    
-    if (contentBlockData.id) {
-      contentBlock = await contentBlockRepository.findOne({
-        where: { id: contentBlockData.id, section_id: sectionId }
-      });
-      if (!contentBlock) {
-        return callback(`Content block with ID ${contentBlockData.id} not found`,null);
-      }
-    } else {
-      contentBlock = new EntityContentBlock();
-      contentBlock.section_id = sectionId;
-    }
+  console.log('=== updateContentBlock function called ===');
+  console.log('contentBlockData:', JSON.stringify(contentBlockData, null, 2));
+  console.log('sectionId:', sectionId);
+  console.log('field_tag in data:', contentBlockData?.field_tag);
 
-    if(contentBlockData.block_type) contentBlock.block_type = contentBlockData.block_type;
-    if (contentBlockData.title) contentBlock.title = contentBlockData.title;
-    if (contentBlockData.content) contentBlock.content = contentBlockData.content;
-    if (contentBlockData.subtitle) contentBlock.subtitle = contentBlockData.subtitle;
-    if (contentBlockData.description) contentBlock.description = contentBlockData.description;
-    if (contentBlockData.display_order !== undefined) contentBlock.display_order = contentBlockData.display_order;
-    if (contentBlockData.alignment) contentBlock.alignment = contentBlockData.alignment;
-    if (contentBlockData.width_percentage !== undefined) contentBlock.width_percentage = contentBlockData.width_percentage;
-    if (contentBlockData.custom_css !== undefined) contentBlock.custom_css = contentBlockData.custom_css;
-    if (contentBlockData.field_tag !== undefined) {
-      contentBlock.field_tag = contentBlockData.field_tag;
-      console.log('Setting field_tag:', contentBlockData.field_tag, 'for block ID:', contentBlockData.id);
-    }
-    if (contentBlockData.status) contentBlock.status = contentBlockData.status;
+  const tag = contentBlockData.field_tag;
+  let contentBlock: EntityContentBlock | null;
 
-    const savedContentBlock = await contentBlockRepository.save(contentBlock);
-    console.log('Saved content block field_tag:', savedContentBlock.field_tag);
-    
-    if(contentBlockData.media_files){
-      await updateContentBlockMedia(contentBlockData.media_files, savedContentBlock.id);
+  // 🔹 Find or create content block
+  if (contentBlockData.id) {
+    contentBlock = await contentBlockRepository.findOne({
+      where: { id: contentBlockData.id, section_id: sectionId }
+    });
+    if (!contentBlock) {
+      return callback(`Content block with ID ${contentBlockData.id} not found`, null);
     }
-
-    // Update related entities
-    if (contentBlockData.statistics) {
-      await updateStatistics(contentBlockData.statistics, savedContentBlock.id);
-    }
-
-    if (contentBlockData.testimonials) {
-      await updateTestimonials(contentBlockData.testimonials, savedContentBlock.id);
-    }
-
-    if (contentBlockData.accreditations) {
-      await updateAccreditations(contentBlockData.accreditations, savedContentBlock.id);
-    }
-
-    if (contentBlockData.buttons) {
-      await updateButtons(contentBlockData.buttons, savedContentBlock.id);
-    }
-
-    if (contentBlockData.faqs) {
-      await updateFaqs(contentBlockData.faqs, savedContentBlock.id);
-    }
-
-    getHomePageDataAdmin((error, result) =>{
-      if(error){
-        return callback(error,null)
-      }  
-      return callback(null, result)
-    })
+  } else {
+    contentBlock = new EntityContentBlock();
+    contentBlock.section_id = sectionId;
   }
+
+  // 🔒 VALIDATION: allow only a single h1 per page
+  if (tag === 'h1') {
+    // load section with page to get page_id
+    const section = await sectionRepository.findOne({
+      where: { id: sectionId },
+      relations: ['page'],
+    });
+
+    if (!section || !section.page) {
+      return callback('Section or page not found for H1 validation', null);
+    }
+
+    const pageId = section.page.id;
+
+    // check if another h1 exists on this page (excluding this block when updating)
+    const qb = contentBlockRepository
+      .createQueryBuilder('cb')
+      .innerJoin('cb.section', 's')
+      .where('s.page_id = :pageId', { pageId })
+      .andWhere('cb.field_tag = :tag', { tag: 'h1' });
+
+    if (contentBlockData.id) {
+      qb.andWhere('cb.id <> :id', { id: contentBlockData.id });
+    }
+
+    const existingH1 = await qb.getOne();
+
+    if (existingH1) {
+      return callback('Only one h1 tag is allowed per page', null);
+    }
+  }
+  // 🔒 END VALIDATION
+
+  if (contentBlockData.block_type) contentBlock.block_type = contentBlockData.block_type;
+  if (contentBlockData.title) contentBlock.title = contentBlockData.title;
+  if (contentBlockData.content) contentBlock.content = contentBlockData.content;
+  if (contentBlockData.subtitle) contentBlock.subtitle = contentBlockData.subtitle;
+  if (contentBlockData.description) contentBlock.description = contentBlockData.description;
+  if (contentBlockData.display_order !== undefined) contentBlock.display_order = contentBlockData.display_order;
+  if (contentBlockData.alignment) contentBlock.alignment = contentBlockData.alignment;
+  if (contentBlockData.width_percentage !== undefined) contentBlock.width_percentage = contentBlockData.width_percentage;
+  if (contentBlockData.custom_css !== undefined) contentBlock.custom_css = contentBlockData.custom_css;
+  if (contentBlockData.field_tag !== undefined) {
+    contentBlock.field_tag = contentBlockData.field_tag;
+    console.log('Setting field_tag:', contentBlockData.field_tag, 'for block ID:', contentBlockData.id);
+  }
+  if (contentBlockData.status) contentBlock.status = contentBlockData.status;
+
+  const savedContentBlock = await contentBlockRepository.save(contentBlock);
+  console.log('Saved content block field_tag:', savedContentBlock.field_tag);
+  
+  if (contentBlockData.media_files) {
+    await updateContentBlockMedia(contentBlockData.media_files, savedContentBlock.id);
+  }
+
+  if (contentBlockData.statistics) {
+    await updateStatistics(contentBlockData.statistics, savedContentBlock.id);
+  }
+
+  if (contentBlockData.testimonials) {
+    await updateTestimonials(contentBlockData.testimonials, savedContentBlock.id);
+  }
+
+  if (contentBlockData.accreditations) {
+    await updateAccreditations(contentBlockData.accreditations, savedContentBlock.id);
+  }
+
+  if (contentBlockData.buttons) {
+    await updateButtons(contentBlockData.buttons, savedContentBlock.id);
+  }
+
+  if (contentBlockData.faqs) {
+    await updateFaqs(contentBlockData.faqs, savedContentBlock.id);
+  }
+
+  getHomePageDataAdmin((error, result) => {
+    if (error) {
+      return callback(error, null);
+    }
+    return callback(null, result);
+  });
+};
+
 
 
 
