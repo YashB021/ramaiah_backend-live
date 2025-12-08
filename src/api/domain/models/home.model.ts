@@ -388,7 +388,7 @@ export const updateContentBlock = async (
   }
 
   // 🔒 VALIDATION: allow only a single h1 per page
-  if (tag === 'h1') {
+  if (tag === 'h1' || tag === 'h2') {
     // load section with page to get page_id
     const section = await sectionRepository.findOne({
       where: { id: sectionId },
