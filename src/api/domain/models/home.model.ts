@@ -504,28 +504,52 @@ export const quickLinksData = async (
   }
 
 export const createContentBlock = async (
-    contentBlockData:ContentBlockDto,
-    sectionId: number,
-    callback: (error:any, result:any) => void
+  contentBlockData: ContentBlockDto,
+  sectionId: number,
+  callback: (error: any, result: any) => void
 ) => {
   try {
-      const section = await sectionRepository.findOne({
+    const section = await sectionRepository.findOne({
       where: { id: sectionId },
-      relations: ['page']
+      relations: ['page'],
     });
 
     if (!section) {
-      return callback(`Section with ID ${sectionId} not found`,null);
+      return callback(`Section with ID ${sectionId} not found`, null);
     }
 
+    // ---------- 💡 H1/H2 per-page validation starts here ----------
+    const tag = contentBlockData.field_tag;
+
+    if (tag === 'h1' || tag === 'h2') {
+      if (!section.page) {
+        return callback('Section is not attached to any page', null);
+      }
+
+      const pageId = section.page.id;
+
+      // Check if another block with same tag already exists on this page
+      const existing = await contentBlockRepository
+        .createQueryBuilder('cb')
+        .innerJoin('cb.section', 's')
+        .where('s.page_id = :pageId', { pageId })
+        .andWhere('cb.field_tag = :tag', { tag })
+        .getOne();
+
+      if (existing) {
+        return callback(`Only one ${tag} is allowed per page`, null);
+      }
+    }
+    // ---------- 💡 H1/H2 per-page validation ends here ----------
+
+    // If you also want to restrict to a specific page, keep this:
     // if (section.page.slug !== 'home') {
-    //   return callback('Can only create content blocks for home page',null)
+    //   return callback('Can only create content blocks for home page', null);
     // }
-    
-    
-    await updateContentBlock(contentBlockData, sectionId,(error:any, result:any) =>{
-      if(error){
-          return callback(error,null)
+
+    await updateContentBlock(contentBlockData, sectionId, (error: any, result: any) => {
+      if (error) {
+        return callback(error, null);
       }
     });
 
@@ -539,21 +563,23 @@ export const createContentBlock = async (
         'testimonials',
         'accreditations',
         'buttons',
-        'faqs'
+        'faqs',
       ],
-      order: { created_at: 'DESC' }
+      order: { created_at: 'DESC' },
     });
-    if(!createdBlock){
-      return callback("content block not found",null)
+
+    if (!createdBlock) {
+      return callback('content block not found', null);
     }
-    return callback(null,transformContentBlocks([createdBlock])[0]);
+
+    return callback(null, transformContentBlocks([createdBlock])[0]);
   } catch (error) {
-    
-      if(error instanceof Error){
-          return callback(error.message,null)
-      }
+    if (error instanceof Error) {
+      return callback(error.message, null);
+    }
   }
-}
+};
+
 
 export const deleteContentBlockById = async (
     contentBlockId: number,

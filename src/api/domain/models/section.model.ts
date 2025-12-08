@@ -9,7 +9,7 @@ const sectionRepository = AppDataSource.getRepository(Section);
 const contentBlockRepository = AppDataSource.getRepository(ContentBlock);
 const pageRepository = AppDataSource.getRepository(Page);
 
-export const createSectionData = async(
+export const   createSectionData = async(
     sectionData: SectionDto,
     callback:(error:any, result:any) => void
 ) => {
