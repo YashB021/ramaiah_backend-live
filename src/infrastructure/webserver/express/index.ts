@@ -11,8 +11,8 @@ import cors from "cors";
 
 export const createServer = (): void => {
     const app = express();
-    // const port = env.APPPORT;
-    const port = process.env.PORT || env.APPPORT || 3003;
+    const port = env.APPPORT;
+    
 
     const host = env.HOST;
 
