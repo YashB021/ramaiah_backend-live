@@ -18,6 +18,7 @@ export const page = async(req: Request, res: Response)=>{
       return ErrorResponse(res,error.message)
     }
   }
+  return;
 }
 
 export const getPages = async(req: Request, res: Response)=>{
@@ -33,6 +34,7 @@ export const getPages = async(req: Request, res: Response)=>{
       return ErrorResponse(res,error.message)
     }
   }
+  return;
 }
 
 
@@ -50,6 +52,7 @@ export const getPageById = async(req: Request, res: Response)=>{
       return ErrorResponse(res,error.message)
     }
   }
+  return;
 }
 
 export const updatePage = async(req: Request, res: Response)=>{
@@ -67,6 +70,7 @@ export const updatePage = async(req: Request, res: Response)=>{
       return ErrorResponse(res,error.message)
     }
   }
+  return;
 }
 
 export const deactive = async(req: Request, res: Response)=>{
@@ -84,6 +88,7 @@ export const deactive = async(req: Request, res: Response)=>{
       return ErrorResponse(res,error.message)
     }
   }
+  return;
 }
 
 
@@ -135,4 +140,5 @@ export const getPageBySlug = async (req: Request, res: Response) => {
           return ErrorResponse(res, error.message);
       }
   }
+  return;
 };

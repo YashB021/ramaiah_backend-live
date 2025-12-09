@@ -16,6 +16,7 @@ export const home = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const homeAdmin = async (req: Request, res: Response) => {
@@ -32,6 +33,7 @@ export const homeAdmin = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const homePage = async (req: Request, res: Response) => {
@@ -48,6 +50,7 @@ export const homePage = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 export const quickLinks = async (req: Request, res: Response) => {
     try {
@@ -62,6 +65,7 @@ export const quickLinks = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const section = async (req: Request, res: Response) => {
@@ -79,6 +83,7 @@ export const section = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const updateContentBlockData = async (req: Request, res: Response) => {
@@ -103,6 +108,7 @@ export const updateContentBlockData = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const createContentBlockData = async (req: Request, res: Response) => {
@@ -121,6 +127,7 @@ export const createContentBlockData = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const deleteContentBlock = async (req: Request, res: Response) => {
@@ -138,6 +145,7 @@ export const deleteContentBlock = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const deleteContentBlockMedia = async (req: Request, res: Response) => {
@@ -155,6 +163,7 @@ export const deleteContentBlockMedia = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 

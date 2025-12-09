@@ -11,8 +11,30 @@ import cors from "cors";
 
 export const createServer = (): void => {
     const app = express();
+    app.use((req, res, next) => {
+        const methodsToWrap = ["json", "send", "end", "redirect"];
+
+        methodsToWrap.forEach((methodName) => {
+            const original = (res as any)[methodName].bind(res);
+
+            (res as any)[methodName] = (...args: any[]) => {
+                if (res.headersSent) {
+                    console.error(
+                        `[DOUBLE_RESPONSE] ${methodName.toUpperCase()} called after headers sent`,
+                        { method: req.method, url: req.originalUrl }
+                    );
+                    // swallow second response attempt
+                    return res;
+                }
+                return original(...args);
+            };
+        });
+
+        next();
+    });
+
     const port = env.APPPORT;
-    
+
 
     const host = env.HOST;
 
@@ -24,7 +46,7 @@ export const createServer = (): void => {
 
     // app.use("/uploads",express.static(path.join(__dirname,"../uploads")));
     app.use("/uploads", express.static(path.join(process.cwd(), "src/uploads")));
-    
+
     /** CORS headers */
 
     // @ts-ignore
@@ -42,19 +64,19 @@ export const createServer = (): void => {
     /** Create HTTP server */
     const server = createHttpServer(app);
 
-    app.get("/",(req,res) => {
+    app.get("/", (req, res) => {
         res.send(`<h1 style="color: green;">Server Running</h1>`)
     })
 
-    app.get("/delete-account-flow",(req, res) => {
-        res.sendFile(path.resolve(process.cwd(),"src/api/privacyPolicy/deleteaccount.html"))
+    app.get("/delete-account-flow", (req, res) => {
+        res.sendFile(path.resolve(process.cwd(), "src/api/privacyPolicy/deleteaccount.html"))
     })
 
     /** API Routes */
     app.use("/api", createRouter());
 
     cronjob()
-    
+
     /** Listen on Port */
     server.listen(port, () => {
         console.log("Running node version: ", process.version);
