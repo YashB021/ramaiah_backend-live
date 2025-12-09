@@ -2,6 +2,7 @@ import { getDoctorDetailsBySlug } from "../../domain/models/doctor.model";
 import { Request, Response } from "express";
 import { ErrorResponse, successResponse } from "../../helpers/apiResponse";
 import { addExpertContentBlockWise, createDoctorApi, getDoctorDetailsById } from "../../domain/models/doctor.model";
+import { updateDoctorApi } from "../../domain/models/doctor.model";
 
 export const createDoctor = async(req: Request, res: Response) => {
     const reqBody = req.body;
@@ -70,3 +71,18 @@ export const getDoctorBySlug = async (req: Request, res: Response) => {
       if (error instanceof Error) return ErrorResponse(res, error.message);
     }
 };
+
+export const updateDoctor = async(req: Request, res: Response) => {
+    const doctorId = req.params.id;
+    const reqBody = req.body;
+    try {
+        updateDoctorApi(Number(doctorId),reqBody,(error:any, result:any) => {
+            if(error){
+                return ErrorResponse(res, error)
+            }  
+            return successResponse(res,"Update successfully.",result)
+        })
+    } catch (error) {
+        if (error instanceof Error) return ErrorResponse(res, error.message);
+    }
+}

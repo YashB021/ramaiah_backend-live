@@ -406,7 +406,7 @@ export const updateContentBlock = async (
       .createQueryBuilder('cb')
       .innerJoin('cb.section', 's')
       .where('s.page_id = :pageId', { pageId })
-      .andWhere('cb.field_tag = :tag', { tag }); // 👈 use actual tag ('h1' or 'h2')
+      .andWhere('cb.field_tag = :tag', { tag }); 
 
     if (contentBlockData.id) {
       qb.andWhere('cb.id <> :id', { id: contentBlockData.id });

@@ -16,6 +16,7 @@ import { assignSpecialties, createSpecialties, doctorSpecialist, fetchSpecialtie
 import { addExpert, createDoctor, getDoctorById, getDoctorBySlug } from "../controllers/doctor.controller";
 import { createCombined } from "../controllers/combined.controller";
 import { getPageBySlug } from "../controllers/page.controller";
+import { updateDoctor } from "../controllers/doctor.controller";
 
 
 
@@ -103,6 +104,7 @@ export const AdminRoute = (router: express.Router): void => {
   route.get("/doctor/specialist", doctorSpecialist)
   route.post("/expert", addExpert)
   route.get("/doctor/:id", getDoctorById)
+  route.put("/doctor/:id", updateDoctor)
 
   // Combined Content Creation API
   route.post("/content/create", createCombined)

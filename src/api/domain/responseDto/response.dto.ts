@@ -167,6 +167,10 @@ export interface DoctorDto {
   is_active?: boolean;
   is_featured?: boolean;
   display_order?: number;
+  fellowships?: any[];
+  awards?: any[];
+  memberships?: any[];
+  blogs?: any[];
   specialty_ids?: number[]; // ✅ IDs of specialties to attach
 }
 

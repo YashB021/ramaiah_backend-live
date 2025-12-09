@@ -202,3 +202,39 @@ export const getDoctorDetailsBySlug = async (
         if (error instanceof Error) return callback(error.message, null);
     }
 };
+
+
+export const updateDoctorApi = async ( doctorId : number, reqBody : DoctorDto, callback: (error: any, result: any) => void ) => {
+    try {
+        const doctor = await doctorRepository.findOneBy({ id: doctorId})
+        if (!doctor) {
+            return callback("Doctor not found", null)
+        }
+
+        doctor.first_name = reqBody.first_name ?? doctor.first_name;
+        doctor.last_name = reqBody.last_name ?? doctor.last_name;
+        doctor.slug = reqBody.slug ?? doctor.slug;
+        doctor.designation = reqBody.designation ?? doctor.designation;
+        doctor.qualifications = reqBody.qualifications ?? doctor.qualifications;
+        doctor.specializations = reqBody.specializations ?? doctor.specializations;
+        doctor.about = reqBody.about ?? doctor.about;
+        doctor.achievements = reqBody.achievements ?? doctor.achievements;
+        doctor.languages = reqBody.languages ?? doctor.languages;
+        doctor.consultation_fee = reqBody.consultation_fee ?? doctor.consultation_fee;
+        doctor.is_active = reqBody.is_active ?? doctor.is_active;
+        doctor.is_featured = reqBody.is_featured ?? doctor.is_featured;
+        doctor.display_order = reqBody.display_order ?? doctor.display_order;
+        doctor.awards = reqBody.awards ?? doctor.awards;
+        doctor.fellowships = reqBody.fellowships ?? doctor.fellowships;
+        doctor.memberships = reqBody.memberships ?? doctor.memberships;
+        doctor.blogs = reqBody.blogs ?? doctor.blogs;
+
+        const updatedDoctor = await doctorRepository.save(doctor);
+        
+        return callback(null, updatedDoctor);
+    }catch (error) {
+        if (error instanceof Error) {
+            return callback(error.message, null)
+        }
+    }
+}
