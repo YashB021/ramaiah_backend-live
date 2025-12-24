@@ -108,62 +108,62 @@ export const deleteSiteSettings = async (
 }
 
 export const uploadMediaOfSiteSettings = async (
-    reqFile: Express.Multer.File,
-    callback:(error:any, result:any) => void
+  reqFile: Express.Multer.File,
+  callback: (error: any, result: any) => void
 ) => {
-    try {
-        if (!reqFile) {
-            return callback("No file uploaded",null)
+  try {
+    if (!reqFile) {
+      return callback("No file uploaded", null);
+    }
+
+    const isSVG = reqFile.mimetype === "image/svg+xml";
+
+    // 🔥 USE upload_stream INSTEAD OF upload(path)
+    const uploadResult = await new Promise<any>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: "site_settings",
+          resource_type: "auto",
+          format: isSVG ? "svg" : undefined,
+          transformation: isSVG ? [{ flags: "sanitize" }] : undefined,
+          use_filename: true,
+          unique_filename: true,
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
         }
+      ).end(reqFile.buffer);
+    });
 
-        const isSVG = reqFile.mimetype === "image/svg+xml";
-
-        const result = await cloudinary.uploader.upload(reqFile.path, {
-            folder: "site_settings",
-            resource_type: "auto",
-            format: isSVG ? "svg" : undefined,
-            transformation: isSVG ? [{ flags: "sanitize" }] : undefined,
-            use_filename: true,
-            unique_filename: true,
-        });
-
-        const cloudinaryPath = result.secure_url; 
-
-        // Extract only the path after `/upload/`
-        const baseIndex = cloudinaryPath.indexOf("/upload/") + "/upload/".length;
-        const relativePath = cloudinaryPath.substring(baseIndex); 
-        console.log("relativePath...",relativePath);
-
-        // Create media entity
-        const mediaFile = new MediaFile();
-        mediaFile.filename = result.public_id;
-        mediaFile.original_filename = reqFile.originalname || result.original_filename;
-        mediaFile.file_path = result.secure_url;
-        mediaFile.file_url = result.secure_url;
-        mediaFile.file_type = detectFileType(reqFile.mimetype);
-        mediaFile.mime_type = reqFile.mimetype;
-        mediaFile.file_size = reqFile.size;
-        // mediaFile.width = result.width || null;
-        // mediaFile.height = result.height || null;
-        // mediaFile.duration = result.duration || null;
-        // mediaFile.alt_text = reqFile.originalname || null;
-        mediaFile.caption = null;
+    const mediaFile = new MediaFile();
+    mediaFile.filename = uploadResult.public_id;
+    mediaFile.original_filename =
+      reqFile.originalname || uploadResult.original_filename;
+    mediaFile.file_path = uploadResult.secure_url;
+    mediaFile.file_url = uploadResult.secure_url;
+    mediaFile.file_type = detectFileType(reqFile.mimetype);
+    mediaFile.mime_type = reqFile.mimetype;
+    mediaFile.file_size = reqFile.size;
+    mediaFile.caption = null;
 
     const savedMedia = await mediaFileRepository.save(mediaFile);
 
     return callback(null, {
       message: "File uploaded successfully",
-    //   filePath: relativePath,
-      filePath:result.secure_url,
-      savedMedia
+      filePath: uploadResult.secure_url,
+      savedMedia,
     });
-    } catch (error) {
-        console.log(error)
-        if(error instanceof Error){
-            return callback(error.message,null)
-        }
-    }
-}
+
+  } catch (error) {
+    console.error("UPLOAD ERROR:", error);
+    return callback(
+      error instanceof Error ? error.message : "Upload failed",
+      null
+    );
+  }
+};
+
 
 // 🔹 helper to detect file type
 function detectFileType(mimeType: string): "image" | "video" | "document" | "audio" {
