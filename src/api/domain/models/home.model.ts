@@ -1,6 +1,6 @@
 import { AppDataSource } from "../../config/db"
 import { ContentBlockMedia } from "../entities/content.block.media.entities";
-import { ContentBlock as EntityContentBlock  } from "../entities/content.blocks.entities";
+import { ContentBlock as EntityContentBlock } from "../entities/content.blocks.entities";
 import { Page } from "../entities/pages.entities"
 import { Section } from "../entities/section.entities";
 import { ButtonDto, ContentBlockDto, ContentBlockDto as DtoContentBlock, MediaFileDto, SectionDto, UpdateHomePageDto } from "../responseDto/response.dto";
@@ -20,77 +20,77 @@ const contentBlockMediaRepository = AppDataSource.getRepository(ContentBlockMedi
 
 
 export const getHomePageData = async (
-    callback:(error:any, result:any) => void
+  callback: (error: any, result: any) => void
 ) => {
-    try {
-        const homePage = await pageRepository.findOne({
-            where: { 
-                slug: 'home',
-                is_active: true,
-                is_published: true 
-            },
-            relations: [
-                'sections',
-                'sections.content_blocks',
-                'sections.content_blocks.media_files',
-                'sections.content_blocks.media_files.media_file',
-                'sections.content_blocks.statistics',
-                'sections.content_blocks.testimonials',
-                'sections.content_blocks.accreditations',
-                'sections.content_blocks.buttons',
-                'sections.content_blocks.faqs'
-            ]
-        });
+  try {
+    const homePage = await pageRepository.findOne({
+      where: {
+        slug: 'home',
+        is_active: true,
+        is_published: true
+      },
+      relations: [
+        'sections',
+        'sections.content_blocks',
+        'sections.content_blocks.media_files',
+        'sections.content_blocks.media_files.media_file',
+        'sections.content_blocks.statistics',
+        'sections.content_blocks.testimonials',
+        'sections.content_blocks.accreditations',
+        'sections.content_blocks.buttons',
+        'sections.content_blocks.faqs'
+      ]
+    });
 
-        if (!homePage) {
-            return callback('Home page not found',null)
-        }
-       
-        const activeSections = homePage.sections
-        .filter(section => section.is_active)
-        .sort((a, b) => a.display_order - b.display_order);
-        
-        const sections: SectionDto[] = activeSections.map(section => ({
-            id: section.id,
-            name: section.name,
-            title: section.title,
-            subtitle: section.subtitle,
-            description: section.description,
-            section_type: section.section_type as SectionDto["section_type"],
-            display_order: section.display_order,
-            background_color: section.background_color,
-            text_color: section.text_color,
-            padding_top: section.padding_top,
-            padding_bottom: section.padding_bottom,
-            margin_top: section.margin_top,
-            margin_bottom: section.margin_bottom,
-            content_blocks: transformContentBlocks(section.content_blocks)
-        }));
-       
-        
-        return callback(null,{
-            id: homePage.id,
-            slug: homePage.slug,
-            title: homePage.title,
-            page_type: homePage.page_type,
-            meta_title: homePage.meta_title,
-            meta_description: homePage.meta_description,
-            meta_keywords: homePage.meta_keywords,
-            sections
-        })
-    } catch (error) {
-        if(error instanceof Error){
-            return callback(error.message,null)
-        }
+    if (!homePage) {
+      return callback('Home page not found', null)
     }
+
+    const activeSections = homePage.sections
+      .filter(section => section.is_active)
+      .sort((a, b) => a.display_order - b.display_order);
+
+    const sections: SectionDto[] = activeSections.map(section => ({
+      id: section.id,
+      name: section.name,
+      title: section.title,
+      subtitle: section.subtitle,
+      description: section.description,
+      section_type: section.section_type as SectionDto["section_type"],
+      display_order: section.display_order,
+      background_color: section.background_color,
+      text_color: section.text_color,
+      padding_top: section.padding_top,
+      padding_bottom: section.padding_bottom,
+      margin_top: section.margin_top,
+      margin_bottom: section.margin_bottom,
+      content_blocks: transformContentBlocks(section.content_blocks)
+    }));
+
+
+    return callback(null, {
+      id: homePage.id,
+      slug: homePage.slug,
+      title: homePage.title,
+      page_type: homePage.page_type,
+      meta_title: homePage.meta_title,
+      meta_description: homePage.meta_description,
+      meta_keywords: homePage.meta_keywords,
+      sections
+    })
+  } catch (error) {
+    if (error instanceof Error) {
+      return callback(error.message, null)
+    }
+  }
 };
 
 export const getHomePageDataAdmin = async (
-    callback: (error: any, result: any) => void
+  callback: (error: any, result: any) => void
 ) => {
-    try {
-         const page = await pageRepository.findOne({
-      where: { slug:"home", is_active: true, is_published: true },
+  try {
+    const page = await pageRepository.findOne({
+      where: { slug: "home", is_active: true, is_published: true },
       relations: [
         'sections',
         'sections.content_blocks',
@@ -105,7 +105,7 @@ export const getHomePageDataAdmin = async (
     });
 
     if (!page) {
-      return callback('Page not found',null)
+      return callback('Page not found', null)
     }
 
     // collect all active content_blocks across sections
@@ -122,6 +122,7 @@ export const getHomePageDataAdmin = async (
             subtitle: cb.subtitle,
             description: cb.description,
             content: cb.content,
+            custom_data: cb.custom_data ?? null,
             alignment: cb.alignment,
             width_percentage: cb.width_percentage,
             custom_css: cb.custom_css,
@@ -129,15 +130,15 @@ export const getHomePageDataAdmin = async (
             display_order: cb.display_order,
 
             media_files: cb.media_files
-            .sort((a, b) => a.display_order - b.display_order)
-            .map(mf => ({
-              id: mf.id,
-              file_url: mf.media_file?.file_url,
-              alt_text: mf.media_file?.alt_text,
-              media_type: mf.media_type,
-              display_order: mf.display_order,
-              media_file: mf.media_file
-            })),
+              .sort((a, b) => a.display_order - b.display_order)
+              .map(mf => ({
+                id: mf.id,
+                file_url: mf.media_file?.file_url,
+                alt_text: mf.media_file?.alt_text,
+                media_type: mf.media_type,
+                display_order: mf.display_order,
+                media_file: mf.media_file
+              })),
 
             statistics: cb.statistics,
             testimonials: cb.testimonials,
@@ -152,23 +153,23 @@ export const getHomePageDataAdmin = async (
           ? a.display_order - b.display_order
           : a.section_id - b.section_id
       );
-      
-      // Return page metadata along with content blocks
-      return callback(null, {
-        id: page.id,
-        slug: page.slug,
-        title: page.title,
-        page_type: page.page_type,
-        meta_title: page.meta_title,
-        meta_description: page.meta_description,
-        meta_keywords: page.meta_keywords,
-        content_blocks: contentBlocks
-      })
-    } catch (error) {
-        if(error instanceof Error){
-            return callback(error.message,null)
-        }
+
+    // Return page metadata along with content blocks
+    return callback(null, {
+      id: page.id,
+      slug: page.slug,
+      title: page.title,
+      page_type: page.page_type,
+      meta_title: page.meta_title,
+      meta_description: page.meta_description,
+      meta_keywords: page.meta_keywords,
+      content_blocks: contentBlocks
+    })
+  } catch (error) {
+    if (error instanceof Error) {
+      return callback(error.message, null)
     }
+  }
 }
 
 export const transformContentBlocks = (contentBlocks: EntityContentBlock[]): DtoContentBlock[] => {
@@ -177,13 +178,14 @@ export const transformContentBlocks = (contentBlocks: EntityContentBlock[]): Dto
     .sort((a, b) => a.display_order - b.display_order)
     .map((block) => ({
       id: block.id,
-      section_id:block.section_id,
+      section_id: block.section_id,
       block_type: block.block_type as DtoContentBlock["block_type"],
       title: block.title,
       content: block.content,
       subtitle: block.subtitle,
       description: block.description,
       display_order: block.display_order,
+      custom_data: block.custom_data ?? null,
       alignment: block.alignment as DtoContentBlock["alignment"],
       width_percentage: block.width_percentage,
       custom_css: block.custom_css,
@@ -256,62 +258,62 @@ export const transformContentBlocks = (contentBlocks: EntityContentBlock[]): Dto
     }));
 };
 
-export const updateHomePage = async(
-    updateData: UpdateHomePageDto,
-    callback:(error:any, result:any) => void
-)=>{
-    try {
-        // Update page metadata
-      const homePage = await pageRepository.findOne({
-        where: { slug: 'home' }
-      });
+export const updateHomePage = async (
+  updateData: UpdateHomePageDto,
+  callback: (error: any, result: any) => void
+) => {
+  try {
+    // Update page metadata
+    const homePage = await pageRepository.findOne({
+      where: { slug: 'home' }
+    });
 
-      if (!homePage) {
-        return callback("Home page not found",null)
-      }
-
-      if (updateData.title) homePage.title = updateData.title;
-      if (updateData.slug) homePage.slug = updateData.slug;
-      if (updateData.page_type) homePage.page_type = updateData.page_type;
-      if (updateData.meta_title) homePage.meta_title = updateData.meta_title;
-      if (updateData.meta_description) homePage.meta_description = updateData.meta_description;
-      if (updateData.meta_keywords) homePage.meta_keywords = updateData.meta_keywords;
-
-      await pageRepository.save(homePage);
-
-      // Update sections if provided
-      // if (updateData.sections) {
-      //   for (const sectionData of updateData.sections) {
-      //     await updateSection(sectionData, homePage.id,(error:any, result:any) => {
-      //       if(error){
-      //           return callback("something went wrong to updateSection",null)
-      //       }
-      //     });
-      //   }
-      // }
-
-      return getHomePageData((error:any, result:any) => {
-        if(error){
-            return callback(error,null)
-        }
-        return callback(null, result);
-      });
-
-    } catch (error) {
-        if(error instanceof Error){
-            return callback(error.message,null)
-        }
+    if (!homePage) {
+      return callback("Home page not found", null)
     }
+
+    if (updateData.title) homePage.title = updateData.title;
+    if (updateData.slug) homePage.slug = updateData.slug;
+    if (updateData.page_type) homePage.page_type = updateData.page_type;
+    if (updateData.meta_title) homePage.meta_title = updateData.meta_title;
+    if (updateData.meta_description) homePage.meta_description = updateData.meta_description;
+    if (updateData.meta_keywords) homePage.meta_keywords = updateData.meta_keywords;
+
+    await pageRepository.save(homePage);
+
+    // Update sections if provided
+    // if (updateData.sections) {
+    //   for (const sectionData of updateData.sections) {
+    //     await updateSection(sectionData, homePage.id,(error:any, result:any) => {
+    //       if(error){
+    //           return callback("something went wrong to updateSection",null)
+    //       }
+    //     });
+    //   }
+    // }
+
+    return getHomePageData((error: any, result: any) => {
+      if (error) {
+        return callback(error, null)
+      }
+      return callback(null, result);
+    });
+
+  } catch (error) {
+    if (error instanceof Error) {
+      return callback(error.message, null)
+    }
+  }
 }
 
-export const updateSection = async(
-    sectionData: SectionDto,
-    pageId: number,
-    sectionId: number,
-    callback:(error:any, result:any) => void
-)=>{
-    try {
-        let section: Section | null;
+export const updateSection = async (
+  sectionData: SectionDto,
+  pageId: number,
+  sectionId: number,
+  callback: (error: any, result: any) => void
+) => {
+  try {
+    let section: Section | null;
 
     if (sectionData.id) {
       section = await sectionRepository.findOne({
@@ -319,7 +321,7 @@ export const updateSection = async(
       });
 
       if (!section) {
-        return callback(`Section with ID ${sectionData.id} not found`,null)
+        return callback(`Section with ID ${sectionData.id} not found`, null)
       }
     } else {
       section = new Section();
@@ -327,9 +329,9 @@ export const updateSection = async(
       section.id = sectionId;
     }
 
-    if(sectionData.name) section.name = sectionData.name;
-    if(sectionData.is_active) section.is_active = sectionData.is_active;
-    if(sectionData.section_type) section.section_type = sectionData.section_type;
+    if (sectionData.name) section.name = sectionData.name;
+    if (sectionData.is_active) section.is_active = sectionData.is_active;
+    if (sectionData.section_type) section.section_type = sectionData.section_type;
     if (sectionData.title) section.title = sectionData.title;
     if (sectionData.subtitle) section.subtitle = sectionData.subtitle;
     if (sectionData.description) section.description = sectionData.description;
@@ -346,25 +348,25 @@ export const updateSection = async(
     // Update content blocks if provided
     if (sectionData.content_blocks) {
       for (const contentBlockData of sectionData.content_blocks) {
-        await updateContentBlock(contentBlockData, savedSection.id,(error:any, result:any) => {
-            if(error){
-                return callback(error,null)
-            }
-            return result
+        await updateContentBlock(contentBlockData, savedSection.id, (error: any, result: any) => {
+          if (error) {
+            return callback(error, null)
+          }
+          return result
         });
       }
     }
-    } catch (error) {
-        if(error instanceof Error){
-            return callback(error.message,null)
-        }
+  } catch (error) {
+    if (error instanceof Error) {
+      return callback(error.message, null)
     }
+  }
 }
 
 export const updateContentBlock = async (
-  contentBlockData: ContentBlockDto, 
+  contentBlockData: ContentBlockDto,
   sectionId: number,
-  callback: (error:any, result:any) => void
+  callback: (error: any, result: any) => void
 ) => {
   console.log('=== updateContentBlock function called ===');
   console.log('contentBlockData:', JSON.stringify(contentBlockData, null, 2));
@@ -406,7 +408,7 @@ export const updateContentBlock = async (
       .createQueryBuilder('cb')
       .innerJoin('cb.section', 's')
       .where('s.page_id = :pageId', { pageId })
-      .andWhere('cb.field_tag = :tag', { tag }); 
+      .andWhere('cb.field_tag = :tag', { tag });
 
     if (contentBlockData.id) {
       qb.andWhere('cb.id <> :id', { id: contentBlockData.id });
@@ -433,11 +435,25 @@ export const updateContentBlock = async (
     contentBlock.field_tag = contentBlockData.field_tag;
     console.log('Setting field_tag:', contentBlockData.field_tag, 'for block ID:', contentBlockData.id);
   }
+
+
+  if (contentBlockData.block_type === "custom") {
+    if (!contentBlockData.custom_data) {
+      return callback("custom_data is required for custom content blocks", null);
+    }
+
+    contentBlock.custom_data = contentBlockData.custom_data;
+  } else {
+    // prevent stale JSON from older custom blocks
+    contentBlock.custom_data = null;
+  }
+
+
   if (contentBlockData.status) contentBlock.status = contentBlockData.status;
 
   const savedContentBlock = await contentBlockRepository.save(contentBlock);
   console.log('Saved content block field_tag:', savedContentBlock.field_tag);
-  
+
   if (contentBlockData.media_files) {
     await updateContentBlockMedia(contentBlockData.media_files, savedContentBlock.id);
   }
@@ -475,70 +491,70 @@ export const updateContentBlock = async (
 
 
 export const quickLinksData = async (
-    callback: (error:any, result:any) => void
+  callback: (error: any, result: any) => void
 ) => {
-    try {
-        const ctaSection = await sectionRepository.findOne({
-        where: { 
-            section_type: 'cta',
-            is_active: true,
-            page: { slug: 'home', is_active: true, is_published: true }
-        },
-        relations: [
-            'content_blocks',
-            'content_blocks.buttons'
-        ]
-        });
+  try {
+    const ctaSection = await sectionRepository.findOne({
+      where: {
+        section_type: 'cta',
+        is_active: true,
+        page: { slug: 'home', is_active: true, is_published: true }
+      },
+      relations: [
+        'content_blocks',
+        'content_blocks.buttons'
+      ]
+    });
 
     if (!ctaSection) {
-      return callback(null,[])
+      return callback(null, [])
     }
 
-    return callback(null,transformContentBlocks(ctaSection.content_blocks));
-    } catch (error) {
-        if(error instanceof Error){
-            return callback(error.message,null)
-        }
+    return callback(null, transformContentBlocks(ctaSection.content_blocks));
+  } catch (error) {
+    if (error instanceof Error) {
+      return callback(error.message, null)
     }
   }
+}
 
-  export const updateSectionById = async (
-    sectionId: number,
-    updateData:SectionDto,
-    callback: (error:any, result:any) => void
+export const updateSectionById = async (
+  sectionId: number,
+  updateData: SectionDto,
+  callback: (error: any, result: any) => void
 ) => {
-    try {
-       const section = await sectionRepository.findOne({
-            where: { id: sectionId },
-            relations: ['page']
-        });
+  try {
+    const section = await sectionRepository.findOne({
+      where: { id: sectionId },
+      relations: ['page']
+    });
 
-        if (!section) {
-            return callback(`Section with ID ${sectionId} not found`,null)
-        }
+    if (!section) {
+      return callback(`Section with ID ${sectionId} not found`, null)
+    }
 
-        // if (section.page.slug !== 'home') {
-        //     return callback('Can only update sections of home page',null)
-        // }
+    // if (section.page.slug !== 'home') {
+    //     return callback('Can only update sections of home page',null)
+    // }
 
-        await updateSection(updateData, Number(section.page_id),sectionId,(error:any, result:any)=> {
-            if(error){
-                return callback(error,null)
-            }
-        });
+    await updateSection(updateData, Number(section.page_id), sectionId, (error: any, result: any) => {
+      if (error) {
+        return callback(error, null)
+      }
+    });
 
-        return getHomePageDataAdmin((error:any, result:any) => {
-            if(error){
-                return callback(error,null)
-            }
-            return callback(null,result)
-        });
-    } catch (error) {
-        if(error instanceof Error){
-            return callback(error.message,null)
-        }
+    return getHomePageDataAdmin((error: any, result: any) => {
+      if (error) {
+        return callback(error, null)
+      }
+      return callback(null, result)
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return callback(error.message, null)
     }
   }
+}
 
 export const createContentBlock = async (
   contentBlockData: ContentBlockDto,
@@ -583,6 +599,13 @@ export const createContentBlock = async (
     // if (section.page.slug !== 'home') {
     //   return callback('Can only create content blocks for home page', null);
     // }
+    if (
+      contentBlockData.block_type === "custom" &&
+      !contentBlockData.custom_data
+    ) {
+      return callback("custom_data is required for custom content blocks", null);
+    }
+
 
     await updateContentBlock(contentBlockData, sectionId, (error: any, result: any) => {
       if (error) {
@@ -619,30 +642,30 @@ export const createContentBlock = async (
 
 
 export const deleteContentBlockById = async (
-    contentBlockId: number,
-    callback: (error:any, result:any) => void
+  contentBlockId: number,
+  callback: (error: any, result: any) => void
 ) => {
   try {
-    await contentBlockRepository.delete({id: contentBlockId});
-    return callback(null,"Delete successfully.");
+    await contentBlockRepository.delete({ id: contentBlockId });
+    return callback(null, "Delete successfully.");
   } catch (error) {
-    console.log("err...",error)
-      if(error instanceof Error){
-          return callback(error.message,null)
-      }
+    console.log("err...", error)
+    if (error instanceof Error) {
+      return callback(error.message, null)
+    }
   }
 }
 
 export const deleteContentBlockMediaById = async (
-    contentBlockMediaId: number,
-    callback: (error:any, result:any) => void
+  contentBlockMediaId: number,
+  callback: (error: any, result: any) => void
 ) => {
   try {
-    await contentBlockMediaRepository.delete({id: contentBlockMediaId});
-    return callback(null,"Delete successfully.");
+    await contentBlockMediaRepository.delete({ id: contentBlockMediaId });
+    return callback(null, "Delete successfully.");
   } catch (error) {
-      if(error instanceof Error){
-          return callback(error.message,null)
-      }
+    if (error instanceof Error) {
+      return callback(error.message, null)
+    }
   }
 }

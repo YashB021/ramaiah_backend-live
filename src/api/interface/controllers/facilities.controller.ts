@@ -16,6 +16,7 @@ export const createFacility = async(req: Request, res: Response)=>{
             return ErrorResponse(res,error);
         }
     }
+    return;
 }
 
 export const getFacilitys = async(req: Request, res: Response)=>{
@@ -31,6 +32,7 @@ export const getFacilitys = async(req: Request, res: Response)=>{
             return ErrorResponse(res,error);
         }
     }
+    return;
 }
 
 export const getFacility = async(req: Request, res: Response)=>{
@@ -47,6 +49,7 @@ export const getFacility = async(req: Request, res: Response)=>{
             return ErrorResponse(res,error);
         }
     }
+    return;
 }
 
 
@@ -65,6 +68,7 @@ export const updateFacility = async(req: Request, res: Response)=>{
             return ErrorResponse(res,error);
         }
     }
+    return;
 }
 
 export const deleteFacility = async(req: Request, res: Response)=>{
@@ -81,6 +85,7 @@ export const deleteFacility = async(req: Request, res: Response)=>{
             return ErrorResponse(res,error);
         }
     }
+    return;
 }
 
 export const servicesFacility = async(req: Request, res: Response)=>{
@@ -97,5 +102,6 @@ export const servicesFacility = async(req: Request, res: Response)=>{
             return ErrorResponse(res,error);
         }
     }
+    return;
 }
     

@@ -17,6 +17,7 @@ export const footerContent = async (req: Request, res: Response) => {
             return ErrorResponse(res, error)
         }
     }
+    return;
 }
 export const footerContentUpdate = async (req: Request, res: Response) => {
     const reqBody = req.body;
@@ -33,4 +34,5 @@ export const footerContentUpdate = async (req: Request, res: Response) => {
             return ErrorResponse(res, error)
         }
     }
+    return;
 }

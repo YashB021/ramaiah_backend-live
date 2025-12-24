@@ -111,4 +111,8 @@ export class ContentBlock {
 
   @OneToMany(() => ContentBlockExpert, expert => expert.content_block)
   "experts": ContentBlockExpert[];
+
+  @Column({ type: 'json', nullable: true })
+  custom_data: any;
+
 }

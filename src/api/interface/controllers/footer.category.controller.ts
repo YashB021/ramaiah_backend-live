@@ -15,4 +15,5 @@ export const footerCategory = async (req: Request, res: Response) => {
             return ErrorResponse(res, error)
         }
     }
+    return;
 }

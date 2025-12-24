@@ -18,6 +18,7 @@ export const createDoctor = async(req: Request, res: Response) => {
             return ErrorResponse(res, error)
         }
     }
+    return;
 }
 
 export const addExpert = async(req: Request, res: Response) => {
@@ -40,6 +41,7 @@ export const addExpert = async(req: Request, res: Response) => {
             return ErrorResponse(res, error)
         }
     }
+    return;
 }
 
 
@@ -57,6 +59,7 @@ export const getDoctorById = async(req: Request, res: Response) => {
             return ErrorResponse(res, error)
         }
     }
+    return;
 }
 
 
@@ -70,6 +73,7 @@ export const getDoctorBySlug = async (req: Request, res: Response) => {
     } catch (error) {
       if (error instanceof Error) return ErrorResponse(res, error.message);
     }
+    return;
 };
 
 export const updateDoctor = async(req: Request, res: Response) => {
@@ -85,4 +89,5 @@ export const updateDoctor = async(req: Request, res: Response) => {
     } catch (error) {
         if (error instanceof Error) return ErrorResponse(res, error.message);
     }
+    return;
 }

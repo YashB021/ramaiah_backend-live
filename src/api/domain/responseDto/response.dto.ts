@@ -108,6 +108,7 @@ export interface ContentBlockDto {
   buttons?: ButtonDto[];
   faqs?: FAQDto[];
   status?: boolean;
+  custom_data?: any;
 }
 
 export interface SectionDto {
