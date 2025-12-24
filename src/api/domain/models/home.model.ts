@@ -189,7 +189,7 @@ export const transformContentBlocks = (contentBlocks: EntityContentBlock[]): Dto
       alignment: block.alignment as DtoContentBlock["alignment"],
       width_percentage: block.width_percentage,
       custom_css: block.custom_css,
-      field_tag: block.field_tag,
+      field_tag: block.field_tag ?? null,
 
       media_files:
         block.media_files?.map((media) => ({
@@ -373,7 +373,12 @@ export const updateContentBlock = async (
   console.log('sectionId:', sectionId);
   console.log('field_tag in data:', contentBlockData?.field_tag);
 
-  const tag = contentBlockData.field_tag;
+  const tag =
+  contentBlockData.field_tag !== undefined &&
+  contentBlockData.field_tag !== null
+    ? contentBlockData.field_tag
+    : null;
+
   let contentBlock: EntityContentBlock | null;
 
   // 🔹 Find or create content block
@@ -390,7 +395,7 @@ export const updateContentBlock = async (
   }
 
   // 🔒 VALIDATION: allow only a single h1 and a single h2 per page
-  if (tag === 'h1' || tag === 'h2') {
+  if (tag && (tag === 'h1' || tag === 'h2')) {
     // load section with page to get page_id
     const section = await sectionRepository.findOne({
       where: { id: sectionId },
@@ -431,14 +436,16 @@ export const updateContentBlock = async (
   if (contentBlockData.alignment) contentBlock.alignment = contentBlockData.alignment;
   if (contentBlockData.width_percentage !== undefined) contentBlock.width_percentage = contentBlockData.width_percentage;
   if (contentBlockData.custom_css !== undefined) contentBlock.custom_css = contentBlockData.custom_css;
-  if (contentBlockData.field_tag !== undefined) {
-    contentBlock.field_tag = contentBlockData.field_tag;
-    console.log('Setting field_tag:', contentBlockData.field_tag, 'for block ID:', contentBlockData.id);
-  }
+  // if (contentBlockData.field_tag !== undefined) {
+  //   contentBlock.field_tag = contentBlockData.field_tag;
+  //   console.log('Setting field_tag:', contentBlockData.field_tag, 'for block ID:', contentBlockData.id);
+  // }
+  contentBlock.field_tag = tag ?? "";
+
 
 
   if (contentBlockData.block_type === "custom") {
-    if (!contentBlockData.custom_data) {
+    if (contentBlockData.custom_data === undefined || contentBlockData.custom_data === null) {
       return callback("custom_data is required for custom content blocks", null);
     }
 
