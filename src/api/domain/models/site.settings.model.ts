@@ -108,62 +108,90 @@ export const deleteSiteSettings = async (
 }
 
 export const uploadMediaOfSiteSettings = async (
-    reqFile: Express.Multer.File,
-    callback:(error:any, result:any) => void
+  reqFile: Express.Multer.File,
+  callback: (error: any, result: any) => void
 ) => {
+  try {
+    if (!reqFile) {
+      return callback("No file uploaded", null);
+    }
+
+    const isSVG = reqFile.mimetype === "image/svg+xml";
+
+    let result;
     try {
-        if (!reqFile) {
-            return callback("No file uploaded",null)
-        }
+      result = await cloudinary.uploader.upload(reqFile.path, {
+        folder: "site_settings",
+        resource_type: "auto",
+        format: isSVG ? "svg" : undefined,
+        transformation: isSVG ? [{ flags: "sanitize" }] : undefined,
+        use_filename: true,
+        unique_filename: true,
+      });
+    } catch (cloudinaryError: any) {
+      console.error("❌ Cloudinary error:", cloudinaryError);
 
-        const isSVG = reqFile.mimetype === "image/svg+xml";
+      // 🔴 Explicit Cloudinary error messages for Postman
+      if (cloudinaryError?.http_code === 401 || cloudinaryError?.http_code === 403) {
+        return callback(
+          "Cloudinary authentication failed (API key/secret invalid or account disabled)",
+          null
+        );
+      }
 
-        const result = await cloudinary.uploader.upload(reqFile.path, {
-            folder: "site_settings",
-            resource_type: "auto",
-            format: isSVG ? "svg" : undefined,
-            transformation: isSVG ? [{ flags: "sanitize" }] : undefined,
-            use_filename: true,
-            unique_filename: true,
-        });
+      if (
+        cloudinaryError?.message?.toLowerCase().includes("disabled") ||
+        cloudinaryError?.message?.toLowerCase().includes("suspended")
+      ) {
+        return callback("Cloudinary account is disabled or suspended", null);
+      }
 
-        const cloudinaryPath = result.secure_url; 
+      if (
+        cloudinaryError?.message?.toLowerCase().includes("quota") ||
+        cloudinaryError?.message?.toLowerCase().includes("limit")
+      ) {
+        return callback("Cloudinary quota exceeded", null);
+      }
 
-        // Extract only the path after `/upload/`
-        const baseIndex = cloudinaryPath.indexOf("/upload/") + "/upload/".length;
-        const relativePath = cloudinaryPath.substring(baseIndex); 
-        console.log("relativePath...",relativePath);
+      return callback(
+        cloudinaryError?.message || "Cloudinary upload failed",
+        null
+      );
+    }
 
-        // Create media entity
-        const mediaFile = new MediaFile();
-        mediaFile.filename = result.public_id;
-        mediaFile.original_filename = reqFile.originalname || result.original_filename;
-        mediaFile.file_path = result.secure_url;
-        mediaFile.file_url = result.secure_url;
-        mediaFile.file_type = detectFileType(reqFile.mimetype);
-        mediaFile.mime_type = reqFile.mimetype;
-        mediaFile.file_size = reqFile.size;
-        // mediaFile.width = result.width || null;
-        // mediaFile.height = result.height || null;
-        // mediaFile.duration = result.duration || null;
-        // mediaFile.alt_text = reqFile.originalname || null;
-        mediaFile.caption = null;
+    const cloudinaryPath = result.secure_url;
+
+    // Extract only the path after `/upload/`
+    const baseIndex = cloudinaryPath.indexOf("/upload/") + "/upload/".length;
+    const relativePath = cloudinaryPath.substring(baseIndex);
+    console.log("relativePath...", relativePath);
+
+    // Create media entity
+    const mediaFile = new MediaFile();
+    mediaFile.filename = result.public_id;
+    mediaFile.original_filename =
+      reqFile.originalname || result.original_filename;
+    mediaFile.file_path = result.secure_url;
+    mediaFile.file_url = result.secure_url;
+    mediaFile.file_type = detectFileType(reqFile.mimetype);
+    mediaFile.mime_type = reqFile.mimetype;
+    mediaFile.file_size = reqFile.size;
+    mediaFile.caption = null;
 
     const savedMedia = await mediaFileRepository.save(mediaFile);
 
     return callback(null, {
       message: "File uploaded successfully",
-    //   filePath: relativePath,
-      filePath:result.secure_url,
-      savedMedia
+      filePath: result.secure_url,
+      savedMedia,
     });
-    } catch (error) {
-        console.log(error)
-        if(error instanceof Error){
-            return callback(error.message,null)
-        }
+  } catch (error) {
+    console.error("❌ Backend error:", error);
+    if (error instanceof Error) {
+      return callback(error.message, null);
     }
-} 
+  }
+};
 
 // 🔹 helper to detect file type
 function detectFileType(mimeType: string): "image" | "video" | "document" | "audio" {
