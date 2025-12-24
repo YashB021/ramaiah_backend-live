@@ -368,6 +368,9 @@ export const updateContentBlock = async (
   sectionId: number,
   callback: (error: any, result: any) => void
 ) => {
+  if (!contentBlockData) {
+    return callback("No content block data provided", null);
+  }
   console.log('=== updateContentBlock function called ===');
   console.log('contentBlockData:', JSON.stringify(contentBlockData, null, 2));
   console.log('sectionId:', sectionId);

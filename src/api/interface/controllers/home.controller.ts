@@ -91,7 +91,7 @@ export const updateContentBlockData = async (req: Request, res: Response) => {
     console.log('Request body:', JSON.stringify(req.body, null, 2));
     console.log('Request params:', req.params);
     const sectionId = Number(req.params.sectionId);
-    const updateData = req.body.updateData;
+    const updateData = req.body.updateData ?? req.body;
     console.log('Section ID:', sectionId);
     console.log('Received updateData:', JSON.stringify(updateData, null, 2));
     console.log('field_tag value:', updateData?.field_tag);
@@ -113,7 +113,12 @@ export const updateContentBlockData = async (req: Request, res: Response) => {
 
 export const createContentBlockData = async (req: Request, res: Response) => {
     const sectionId = Number(req.params.sectionId);
-    const contentBlockData = req.body.contentBlockData;
+    const contentBlockData = req.body.contentBlockData ?? req.body;
+    console.log('createContentBlockData body:', JSON.stringify(req.body, null, 2));
+    console.log('Resolved contentBlockData:', JSON.stringify(contentBlockData, null, 2));
+    if (!contentBlockData) {
+        return ErrorResponse(res, 'No content block data provided');
+    }
     try {
         createContentBlock(contentBlockData,sectionId,(error:any, result:any) => {
             if(error){
