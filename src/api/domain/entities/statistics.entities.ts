@@ -19,6 +19,9 @@ export class Statistic {
   @Column({ length: 50, nullable: true })
   "number": string;
 
+  @Column({ type: 'int', nullable: true })
+  "display_order": number;
+
   @Column({ length: 100, nullable: true })
   "label": string;
 

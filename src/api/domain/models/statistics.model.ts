@@ -47,6 +47,7 @@ export const updateStatistics = async (
       if(stat.color) statistic.color = stat.color;
       if(stat.animation_delay) statistic.animation_delay = stat.animation_delay;
       if(stat.statistics_image) statistic.statistics_image = stat.statistics_image;
+      if(stat.display_order !== undefined) statistic.display_order = stat.display_order;
 
       await statisticRepositoy.save(statistic);
     }

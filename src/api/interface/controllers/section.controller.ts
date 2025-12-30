@@ -16,6 +16,7 @@ export const createSection = async(req: Request, res: Response) => {
             return ErrorResponse(res,error.message)
         }
     }
+    return;
 }
 
 export const sectionsLists = async(req: Request, res: Response) => {
@@ -33,6 +34,7 @@ export const sectionsLists = async(req: Request, res: Response) => {
             return ErrorResponse(res,error.message)
         }
     }
+    return;
 }
 
 export const deleteSection = async(req: Request, res: Response) => {
@@ -49,6 +51,7 @@ export const deleteSection = async(req: Request, res: Response) => {
             return ErrorResponse(res,error.message)
         }
     }
+    return;
 }
 
 export const getSection = async(req: Request, res: Response) => {
@@ -65,4 +68,5 @@ export const getSection = async(req: Request, res: Response) => {
             return ErrorResponse(res,error.message)
         }
     }
+    return;
 }
