@@ -16,6 +16,7 @@ export const settings = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const bulkUpdateSettingsHandler  = async (req: Request, res: Response) => {
@@ -32,6 +33,7 @@ export const bulkUpdateSettingsHandler  = async (req: Request, res: Response) =>
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const deleteSettings = async (req: Request, res: Response) => {
@@ -48,6 +50,8 @@ export const deleteSettings = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
+
 }
 
 export const uploadFile = async (req: Request, res: Response) => {
@@ -84,4 +88,5 @@ export const header = async (req: Request, res: Response) =>{
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }

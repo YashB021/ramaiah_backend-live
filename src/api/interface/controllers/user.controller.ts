@@ -16,6 +16,7 @@ export const register = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const login = async (req: Request, res: Response) => {
@@ -32,4 +33,5 @@ export const login = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }

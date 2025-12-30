@@ -37,6 +37,7 @@ export interface StatisticDto {
   color?: string;
   animation_delay?: number;
   statistics_image?: string;
+  display_order?: number;
 }
 
 export interface TestimonialDto {

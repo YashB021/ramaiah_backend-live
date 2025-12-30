@@ -12,6 +12,9 @@ export class Statistic {
 
   @Column({ length: 50 })
   "statistic_text": string;
+  
+  @Column({ default: 0 })
+  "display_order": number;
 
   @Column({nullable:true, type:"varchar"})
   "statistics_image": string;

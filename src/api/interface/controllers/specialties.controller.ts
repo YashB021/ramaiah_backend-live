@@ -13,6 +13,7 @@ export const fetchSpecialties = async (req: Request, res: Response) => {
     } catch (error) {
         return ErrorResponse(res, error);
     }
+    return;
 }
 
 
@@ -28,6 +29,7 @@ export const createSpecialties = async (req: Request, res: Response) => {
     } catch (error) {
         return ErrorResponse(res, error);
     }
+    return;
 }
 
 export const doctorSpecialist = async (req: Request, res: Response) => {
@@ -42,6 +44,7 @@ export const doctorSpecialist = async (req: Request, res: Response) => {
     } catch (error) {
         return ErrorResponse(res, error);
     }
+    return;
 }
     
 export const assignSpecialties = async (req: Request, res: Response) => {
@@ -56,6 +59,7 @@ export const assignSpecialties = async (req: Request, res: Response) => {
     } catch (error) {
         return ErrorResponse(res, error);
     }
+    return;
 }
 
 

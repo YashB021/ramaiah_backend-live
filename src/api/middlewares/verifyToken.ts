@@ -46,5 +46,6 @@ export const adminProtector = async(
     return unauthorized(res, Constants.ERROR_MESSAGES.AUTHORIZATION_NOT_ALLOWED)
   }
   next()
+  return;
 }
 export default verifyToken;

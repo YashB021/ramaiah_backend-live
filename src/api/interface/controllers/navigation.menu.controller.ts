@@ -16,6 +16,7 @@ export const createMenu = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const getMenu = async (req: Request, res: Response) => {
@@ -31,6 +32,7 @@ export const getMenu = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const menus = async (req: Request, res: Response) => {
@@ -46,6 +48,7 @@ export const menus = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const adminmenus = async (req: Request, res: Response) => {
@@ -61,6 +64,7 @@ export const adminmenus = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const sidebarMenu = async (req: Request, res: Response) => {
@@ -76,6 +80,7 @@ export const sidebarMenu = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const createM = async (req: Request, res: Response) => {
@@ -92,6 +97,7 @@ export const createM = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const createNavItemPageM = async (req: Request, res: Response) => {
@@ -108,6 +114,7 @@ export const createNavItemPageM = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 
@@ -125,6 +132,7 @@ export const getMenuItem = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const updateitem = async (req: Request, res: Response) => {
@@ -142,6 +150,7 @@ export const updateitem = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 export const deleteItem = async (req: Request, res: Response) => {
@@ -158,6 +167,7 @@ export const deleteItem = async (req: Request, res: Response) => {
             return ErrorResponse(res, error.message);
         }
     }
+    return;
 }
 
 
